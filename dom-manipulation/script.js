@@ -18,12 +18,24 @@ document.addEventListener('DOMContentLoaded', () => {
       quoteDisplay.innerHTML = quotes[0].text
 
         
-        function showRandomQuote (){
-        // setting up random index to change quotes
-        const randomIndex =  Math.floor(Math.random() * quotes.length);
-        // displaying quote
-        quoteDisplay.innerHTML = quotes[randomIndex].text;
-      }
+      function showRandomQuote() {
+        // Setting up random index to change quotes
+        const randomIndex = Math.floor(Math.random() * quotes.length);
+    
+        // Clearing previous content
+        quoteDisplay.innerHTML = '';
+    
+        // Creating and appending the category element
+        const categoryElement = document.createElement('p');
+        categoryElement.innerHTML = `Category: ${quotes[randomIndex].category}`;
+        quoteDisplay.appendChild(categoryElement);
+    
+        // Creating and appending the quote element
+        const quoteElement = document.createElement('p');
+        quoteElement.innerHTML = quotes[randomIndex].text;
+        quoteDisplay.appendChild(quoteElement);
+    }
+    
       //   adding a click event to change 
       newQuote.addEventListener('click', showRandomQuote)
 
