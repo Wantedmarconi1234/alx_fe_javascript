@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const newQuoteCategory = document.getElementById('newQuoteCategory');
     const categoryFilter = document.getElementById('categoryFilter');
     const importFile = document.getElementById('importFile');
+    const SERVER_URL = 'https://jsonplaceholder.typicode.com/posts';
+    const SYNC_INTERVAL = 60000; // Sync every 60 seconds
 
     let quotes = localStorage.getItem('quotes') ? JSON.parse(localStorage.getItem('quotes')) : [];
 
@@ -58,6 +60,60 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.addQuote = addQuote;
+
+    async function fetchQuotesFromServer() {
+        try {
+            const response = await fetch(SERVER_URL);
+            const serverQuotes = await response.json();
+            return serverQuotes.map(item => ({ text: item.title, category: 'Server' })); // Adjust to your data structure
+        } catch (error) {
+            console.error('Error fetching quotes from server:', error);
+            return [];
+        }
+    }
+
+    async function postQuotesToServer(quotes) {
+        try {
+            const response = await fetch(SERVER_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(quotes)
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Error posting quotes to server:', error);
+        }
+    }
+
+    async function syncQuotes() {
+        const serverQuotes = await fetchQuotesFromServer();
+        const localQuotes = JSON.parse(localStorage.getItem('quotes')) || [];
+        const mergedQuotes = resolveConflicts(localQuotes, serverQuotes);
+        localStorage.setItem('quotes', JSON.stringify(mergedQuotes));
+        quotes = mergedQuotes;
+        populateCategories();
+        showRandomQuote();
+        showNotification('Data has been updated from the server.');
+    }
+
+    function resolveConflicts(localQuotes, serverQuotes) {
+        const localTextSet = new Set(localQuotes.map(quote => quote.text));
+        const mergedQuotes = [...localQuotes, ...serverQuotes.filter(quote => !localTextSet.has(quote.text))];
+        return mergedQuotes;
+    }
+
+    setInterval(syncQuotes, SYNC_INTERVAL);
+
+    function showNotification(message) {
+        const notification = document.getElementById('notification');
+        notification.innerText = message;
+        notification.style.display = 'block';
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 5000);
+    }
 
     function populateCategories() {
         const categories = [...new Set(quotes.map(quote => quote.category))];
