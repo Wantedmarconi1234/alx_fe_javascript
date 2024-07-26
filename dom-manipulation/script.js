@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         quotes.push(newQuote);
         localStorage.setItem('quotes', JSON.stringify(quotes));
 
-        populateCategory();
+        populateCategories();
 
         newQuoteText.value = '';
         newQuoteCategory.value = '';
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addQuote = addQuote;
 
-    function populateCategory() {
+    function populateCategories() {
         const categories = [...new Set(quotes.map(quote => quote.category))];
         categoryFilter.innerHTML = '<option value="all">All Categories</option>';
         categories.forEach(category => {
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const importedQuotes = JSON.parse(event.target.result);
             quotes = [...quotes, ...importedQuotes];
             localStorage.setItem('quotes', JSON.stringify(quotes));
-            populateCategory();
+            populateCategories();
             showRandomQuote();
             alert('Quotes imported successfully!');
         };
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.importFromJsonFile = importFromJsonFile;
 
-    populateCategory();
+    populateCategories();
 
     const lastViewedQuote = sessionStorage.getItem('lastViewedQuote');
     if (lastViewedQuote) {
