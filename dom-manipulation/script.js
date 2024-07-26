@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Selecting DOM elements
-  const newQuoteButton = document.getElementById('newQuoteButton');
-  const quoteContainer = document.getElementById('quoteContainer');
+  const newQuoteButton = document.getElementById('newQuote');
   const quoteDisplay = document.getElementById('quoteDisplay');
   const newQuoteText = document.getElementById('newQuoteText');
   const newQuoteCategory = document.getElementById('newQuoteCategory');
@@ -75,14 +74,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // Function to export quotes to a JSON file
   function exportToJsonFile() {
       const dataStr = JSON.stringify(quotes, null, 2);
-      const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
 
-      const exportFileDefaultName = 'quotes.json';
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'quotes.json';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
-      const linkElement = document.createElement('a');
-      linkElement.setAttribute('href', dataUri);
-      linkElement.setAttribute('download', exportFileDefaultName);
-      linkElement.click();
+      // Clean up the URL object
+      URL.revokeObjectURL(url);
   }
 
   // Attaching exportToJsonFile function to window for onclick to work
