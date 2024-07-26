@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         quotes.push(newQuote);
         localStorage.setItem('quotes', JSON.stringify(quotes));
 
-        populateCategoryFilter();
+        populateCategoryFilter(); // Update category filter
 
         // Clear input fields after adding a quote
         newQuoteText.value = '';
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const importedQuotes = JSON.parse(event.target.result);
             quotes = [...quotes, ...importedQuotes];
             localStorage.setItem('quotes', JSON.stringify(quotes));
-            populateCategoryFilter();
+            populateCategoryFilter(); // Update category filter
             showRandomQuote();
             alert('Quotes imported successfully!');
         };
